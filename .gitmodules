@@ -1,3 +1,3 @@
 [submodule "aubo_robot_description"]
 	path = aubo_robot_description
-	url = https://forge.robossembler.org/solid-sinusoid/aubo_robot_description.git
+	url = https://forge.robossembler.org/solid-sinusoid/aubo_ros2_description.git
