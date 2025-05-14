@@ -4,7 +4,7 @@
 
 # 在 rviz 中 查看 aubo 机器人模型（以 aubo_i5 为例）
 ```bash
-ros2 launch aubo_description aubo_viewer.launch.py
+ros2 launch aubo_description view_auboi5.launch.py
 ```
 # 驱动真实机械臂 aubo_i5 (修改机器人对应 robot_ip aubo_type)
 ```bash 
