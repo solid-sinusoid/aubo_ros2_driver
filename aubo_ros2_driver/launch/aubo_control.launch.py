@@ -54,7 +54,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "description_file",
-            default_value="aubo_ros2.xacro",
+            default_value="aubo_i5.urdf.xacro",
             description="URDF/XACRO description file with the robot, e.g. aubo.xacro",
         )
     )
@@ -84,6 +84,14 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
+            "hardware",
+            default_value="real",
+            choices=["real", "gazebo", "fake"],
+            description="Hardware type of ros2_control",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
             "aubo_port",
             default_value="80",
             description="Port at which RWS can be found. \
@@ -101,7 +109,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "initial_joint_controller",
-            default_value="joint_trajectory_controller",
+            default_value="cartesian_motion_controller",
             description="Robot controller to start.",
         )
     )
@@ -117,11 +125,8 @@ def generate_launch_description():
     description_package = LaunchConfiguration("description_package")
     moveit_config_package = LaunchConfiguration("moveit_config_package")
     description_file = LaunchConfiguration("description_file")
-    prefix = LaunchConfiguration("prefix")
-    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
-    fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
+    hardware = LaunchConfiguration("hardware")
     robot_ip = LaunchConfiguration("robot_ip")
-    aubo_type = LaunchConfiguration("aubo_type")
     initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     launch_rviz = LaunchConfiguration("launch_rviz")
 
@@ -130,23 +135,14 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare(description_package), "urdf/xacro/inc/", description_file]
+                [FindPackageShare(description_package), "urdf/", description_file]
             ),
             " ",
-            "prefix:=",
-            prefix,
-            " ",
-            "use_fake_hardware:=",
-            use_fake_hardware,
-            " ",
-            "fake_sensor_commands:=",
-            fake_sensor_commands,
+            "hardware:=",
+            hardware,
             " ",
             "robot_ip:=",
             robot_ip,
-            " ",
-            "aubo_type:=",
-            aubo_type,
             " ",
            
         ]
@@ -162,12 +158,20 @@ def generate_launch_description():
     )
 
     
+    # aubo_control_node = Node(
+    #     package="aubo_ros2_driver",
+    #     executable="aubo_ros2_control_node",
+    #     parameters=[robot_description, robot_controllers],
+    #     output="both",
+    # )
+
     aubo_control_node = Node(
-        package="aubo_ros2_driver",
-        executable="aubo_ros2_control_node",
+        package="controller_manager",
+        executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         output="both",
     )
+
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
