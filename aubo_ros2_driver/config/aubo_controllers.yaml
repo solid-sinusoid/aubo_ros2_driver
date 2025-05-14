@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200  # Hz  250
+    update_rate: 250  # Hz  250
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -10,6 +10,12 @@ controller_manager:
 
     forward_command_controller_position:
       type: forward_command_controller/ForwardCommandController
+
+    cartesian_motion_controller:
+      type: cartesian_motion_controller/CartesianMotionController
+
+    motion_control_handle:
+      type: cartesian_controller_handles/MotionControlHandle
 
 joint_trajectory_controller:
   ros__parameters:
@@ -42,3 +48,50 @@ forward_command_controller_position:
       - wrist2_joint
       - wrist3_joint
     interface_name: position
+
+
+cartesian_motion_controller:
+  ros__parameters:
+    command_interfaces:
+    - position
+    end_effector_link: wrist3_Link
+    joints:
+    - shoulder_joint
+    - upperArm_joint
+    - foreArm_joint
+    - wrist1_joint
+    - wrist2_joint
+    - wrist3_joint
+    pd_gains:
+      rot_x:
+        p: 0.5
+      rot_y:
+        p: 0.5
+      rot_z:
+        p: 0.5
+      trans_x:
+        p: 1.0
+      trans_y:
+        p: 1.0
+      trans_z:
+        p: 1.0
+    robot_base_link: base_link
+    solver:
+      error_scale: 1.0
+      iterations: 10
+      publish_state_feedback: true
+
+
+motion_control_handle:
+  ros__parameters:
+    controller_name: cartesian_motion_controller
+    end_effector_link: wrist3_Link
+    ft_sensor_ref_link: tool0
+    joints:
+    - shoulder_joint
+    - upperArm_joint
+    - foreArm_joint
+    - wrist1_joint
+    - wrist2_joint
+    - wrist3_joint
+    robot_base_link: base_link
